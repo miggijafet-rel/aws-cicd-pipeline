@@ -1,0 +1,55 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_DEFAULT_REGION: ap-southeast-1
+    ECR_REPO_NAME: fargate-lab-app
+    ECS_CONTAINER_NAME: fargate-lab-app
+    IMAGE_TAG: latest
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+    commands:
+      # Install Trivy for container vulnerability scanning
+      - echo "Installing Trivy..."
+      - wget -qO- https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+      - trivy --version
+
+  pre_build:
+    commands:
+      # Authenticate Docker to ECR
+      - echo "Logging in to ECR..."
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPO_NAME
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=$COMMIT_HASH
+
+  build:
+    commands:
+      # Build Docker image
+      - echo "Building Docker image..."
+      - docker build -t $ECR_URI:$IMAGE_TAG .
+      - docker tag $ECR_URI:$IMAGE_TAG $ECR_URI:latest
+
+      # Run Trivy security scan — FAIL build on HIGH or CRITICAL CVEs
+      - echo "Running Trivy security scan..."
+      - trivy image --exit-code 1 --severity HIGH,CRITICAL --no-progress $ECR_URI:$IMAGE_TAG
+      - echo "Trivy scan passed - no HIGH or CRITICAL vulnerabilities found"
+
+  post_build:
+    commands:
+      # Push image to ECR
+      - echo "Pushing image to ECR..."
+      - docker push $ECR_URI:$IMAGE_TAG
+      - docker push $ECR_URI:latest
+
+      # Generate imagedefinitions.json — tells ECS which image to deploy
+      - echo "Generating imagedefinitions.json..."
+      - printf '[{"name":"%s","imageUri":"%s"}]' $ECS_CONTAINER_NAME $ECR_URI:$IMAGE_TAG > imagedefinitions.json
+      - cat imagedefinitions.json
+
+artifacts:
+  files:
+    - imagedefinitions.json
