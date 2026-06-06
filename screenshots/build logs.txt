@@ -1,0 +1,311 @@
+[Container] 2026/06/06 13:10:28.945710 Running on CodeBuild On-demand
+[Container] 2026/06/06 13:10:28.945724 Waiting for agent ping
+[Container] 2026/06/06 13:10:29.247374 Waiting for DOWNLOAD_SOURCE
+[Container] 2026/06/06 13:10:30.530439 Phase is DOWNLOAD_SOURCE
+[Container] 2026/06/06 13:10:30.531525 CODEBUILD_SRC_DIR=/codebuild/output/src3055818669/src
+[Container] 2026/06/06 13:10:30.532037 YAML location is /codebuild/output/src3055818669/src/buildspec.yml
+[Container] 2026/06/06 13:10:30.533982 Setting HTTP client timeout to higher timeout for S3 source
+[Container] 2026/06/06 13:10:30.534071 Processing environment variables
+[Container] 2026/06/06 13:10:30.843076 Selecting 'python' runtime version '3.12' based on manual selections...
+[Container] 2026/06/06 13:10:30.843720 Running command echo "Installing Python version 3.12 ..."
+Installing Python version 3.12 ...
+
+[Container] 2026/06/06 13:10:30.848802 Running command pyenv global $PYTHON_312_VERSION
+
+[Container] 2026/06/06 13:10:31.215673 Moving to directory /codebuild/output/src3055818669/src
+[Container] 2026/06/06 13:10:31.215699 Cache is not defined in the buildspec
+[Container] 2026/06/06 13:10:31.326605 Skip cache due to: no paths specified to be cached
+[Container] 2026/06/06 13:10:31.326849 Registering with agent
+[Container] 2026/06/06 13:10:31.434551 Phases found in YAML: 4
+[Container] 2026/06/06 13:10:31.434576  INSTALL: 3 commands
+[Container] 2026/06/06 13:10:31.434582  PRE_BUILD: 5 commands
+[Container] 2026/06/06 13:10:31.434585  BUILD: 6 commands
+[Container] 2026/06/06 13:10:31.434587  POST_BUILD: 6 commands
+[Container] 2026/06/06 13:10:31.434909 Phase complete: DOWNLOAD_SOURCE State: SUCCEEDED
+[Container] 2026/06/06 13:10:31.434922 Phase context status code:  Message: 
+[Container] 2026/06/06 13:10:31.698406 Entering phase INSTALL
+[Container] 2026/06/06 13:10:31.813992 Running command echo "Installing Trivy..."
+Installing Trivy...
+
+[Container] 2026/06/06 13:10:31.822384 Running command wget -qO- https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+aquasecurity/trivy info checking GitHub for latest tag
+aquasecurity/trivy info found version: 0.71.0 for v0.71.0/Linux/64bit
+aquasecurity/trivy info installed /usr/local/bin/trivy
+
+[Container] 2026/06/06 13:10:37.060893 Running command trivy --version
+Version: 0.71.0
+
+[Container] 2026/06/06 13:10:37.332617 Phase complete: INSTALL State: SUCCEEDED
+[Container] 2026/06/06 13:10:37.332638 Phase context status code:  Message: 
+[Container] 2026/06/06 13:10:37.370000 Entering phase PRE_BUILD
+[Container] 2026/06/06 13:10:37.371115 Running command echo "Logging in to ECR..."
+Logging in to ECR...
+
+[Container] 2026/06/06 13:10:37.377086 Running command aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+
+WARNING! Your credentials are stored unencrypted in '/root/.docker/config.json'.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/go/credential-store/
+
+Login Succeeded
+
+[Container] 2026/06/06 13:10:49.152431 Running command ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPO_NAME
+
+[Container] 2026/06/06 13:10:49.157991 Running command COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+
+[Container] 2026/06/06 13:10:49.164637 Running command IMAGE_TAG=$COMMIT_HASH
+
+[Container] 2026/06/06 13:10:49.170018 Phase complete: PRE_BUILD State: SUCCEEDED
+[Container] 2026/06/06 13:10:49.170041 Phase context status code:  Message: 
+[Container] 2026/06/06 13:10:49.208007 Entering phase BUILD
+[Container] 2026/06/06 13:10:49.209014 Running command echo "Building Docker image..."
+Building Docker image...
+
+[Container] 2026/06/06 13:10:49.214882 Running command docker build -t $ECR_URI:$IMAGE_TAG .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 563B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.12-alpine
+#2 DONE 2.1s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 3.38kB done
+#4 DONE 0.0s
+
+#5 [1/6] FROM docker.io/library/python:3.12-alpine@sha256:236173eb74001afe2f60862de935b74fcbd00adfca247b2c27051a70a6a39a2d
+#5 resolve docker.io/library/python:3.12-alpine@sha256:236173eb74001afe2f60862de935b74fcbd00adfca247b2c27051a70a6a39a2d 0.0s done
+#5 sha256:236173eb74001afe2f60862de935b74fcbd00adfca247b2c27051a70a6a39a2d 10.30kB / 10.30kB done
+#5 sha256:2d07747661646f3d904e995a232fb19e461afde69e67e6f7f3b52c7b968a88b3 1.74kB / 1.74kB done
+#5 sha256:d10dc7bdd3eafc178ccc7672fb3cb319a4c6c34d332a4234832777868e1e18f3 5.42kB / 5.42kB done
+#5 sha256:254ac41e2afd13e7a1276627191463329b96d835eab35e7804fdad56d7e363d5 0B / 455.66kB 0.3s
+#5 sha256:fd21a26fb55d22baaa317c98a4296e6a284dd39cc0f9e68ef781bb74adfd6dc7 0B / 13.74MB 0.3s
+#5 sha256:3a4f2e6e1560fccb75f8aa9c6b7458b3179164f6378b125e533286c88351cd2a 0B / 250B 0.3s
+#5 sha256:fd21a26fb55d22baaa317c98a4296e6a284dd39cc0f9e68ef781bb74adfd6dc7 10.49MB / 13.74MB 0.5s
+#5 sha256:fd21a26fb55d22baaa317c98a4296e6a284dd39cc0f9e68ef781bb74adfd6dc7 13.74MB / 13.74MB 0.5s done
+#5 extracting sha256:254ac41e2afd13e7a1276627191463329b96d835eab35e7804fdad56d7e363d5
+#5 sha256:254ac41e2afd13e7a1276627191463329b96d835eab35e7804fdad56d7e363d5 455.66kB / 455.66kB 0.7s done
+#5 sha256:3a4f2e6e1560fccb75f8aa9c6b7458b3179164f6378b125e533286c88351cd2a 250B / 250B 0.9s done
+#5 extracting sha256:254ac41e2afd13e7a1276627191463329b96d835eab35e7804fdad56d7e363d5 0.1s done
+#5 extracting sha256:fd21a26fb55d22baaa317c98a4296e6a284dd39cc0f9e68ef781bb74adfd6dc7 0.1s
+#5 extracting sha256:fd21a26fb55d22baaa317c98a4296e6a284dd39cc0f9e68ef781bb74adfd6dc7 0.5s done
+#5 extracting sha256:3a4f2e6e1560fccb75f8aa9c6b7458b3179164f6378b125e533286c88351cd2a done
+#5 DONE 1.5s
+
+#6 [2/6] RUN apk add --no-cache gcc musl-dev
+#6 1.355 ( 1/13) Installing libgcc (15.2.0-r2)
+#6 1.359 ( 2/13) Installing jansson (2.14.1-r0)
+#6 1.362 ( 3/13) Installing libstdc++ (15.2.0-r2)
+#6 1.381 ( 4/13) Installing zstd-libs (1.5.7-r2)
+#6 1.389 ( 5/13) Installing binutils (2.45.1-r0)
+#6 1.454 ( 6/13) Installing libgomp (15.2.0-r2)
+#6 1.460 ( 7/13) Installing libatomic (15.2.0-r2)
+#6 1.462 ( 8/13) Installing gmp (6.3.0-r4)
+#6 1.468 ( 9/13) Installing isl26 (0.26-r1)
+#6 1.485 (10/13) Installing mpfr4 (4.2.2-r0)
+#6 1.493 (11/13) Installing mpc1 (1.3.1-r1)
+#6 1.496 (12/13) Installing gcc (15.2.0-r2)
+#6 2.478 (13/13) Installing musl-dev (1.2.5-r23)
+#6 2.559 Executing busybox-1.37.0-r30.trigger
+#6 2.570 OK: 203.3 MiB in 51 packages
+#6 DONE 3.7s
+
+#7 [3/6] WORKDIR /app
+#7 DONE 0.1s
+
+#8 [4/6] COPY requirements.txt .
+#8 DONE 0.1s
+
+#9 [5/6] RUN pip install --no-cache-dir -r requirements.txt
+#9 2.165 Collecting flask==3.0.3 (from -r requirements.txt (line 1))
+#9 2.190   Downloading flask-3.0.3-py3-none-any.whl.metadata (3.2 kB)
+#9 2.209 Collecting gunicorn==22.0.0 (from -r requirements.txt (line 2))
+#9 2.214   Downloading gunicorn-22.0.0-py3-none-any.whl.metadata (4.4 kB)
+#9 2.239 Collecting Werkzeug>=3.0.0 (from flask==3.0.3->-r requirements.txt (line 1))
+#9 2.244   Downloading werkzeug-3.1.8-py3-none-any.whl.metadata (4.0 kB)
+#9 2.258 Collecting Jinja2>=3.1.2 (from flask==3.0.3->-r requirements.txt (line 1))
+#9 2.262   Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+#9 2.272 Collecting itsdangerous>=2.1.2 (from flask==3.0.3->-r requirements.txt (line 1))
+#9 2.276   Downloading itsdangerous-2.2.0-py3-none-any.whl.metadata (1.9 kB)
+#9 2.293 Collecting click>=8.1.3 (from flask==3.0.3->-r requirements.txt (line 1))
+#9 2.297   Downloading click-8.4.1-py3-none-any.whl.metadata (2.6 kB)
+#9 2.305 Collecting blinker>=1.6.2 (from flask==3.0.3->-r requirements.txt (line 1))
+#9 2.310   Downloading blinker-1.9.0-py3-none-any.whl.metadata (1.6 kB)
+#9 2.325 Collecting packaging (from gunicorn==22.0.0->-r requirements.txt (line 2))
+#9 2.329   Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+#9 2.383 Collecting MarkupSafe>=2.0 (from Jinja2>=3.1.2->flask==3.0.3->-r requirements.txt (line 1))
+#9 2.387   Downloading markupsafe-3.0.3-cp312-cp312-musllinux_1_2_x86_64.whl.metadata (2.7 kB)
+#9 2.397 Downloading flask-3.0.3-py3-none-any.whl (101 kB)
+#9 2.406 Downloading gunicorn-22.0.0-py3-none-any.whl (84 kB)
+#9 2.409 Downloading blinker-1.9.0-py3-none-any.whl (8.5 kB)
+#9 2.413 Downloading click-8.4.1-py3-none-any.whl (116 kB)
+#9 2.417 Downloading itsdangerous-2.2.0-py3-none-any.whl (16 kB)
+#9 2.420 Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+#9 2.424 Downloading werkzeug-3.1.8-py3-none-any.whl (226 kB)
+#9 2.428 Downloading packaging-26.2-py3-none-any.whl (100 kB)
+#9 2.432 Downloading markupsafe-3.0.3-cp312-cp312-musllinux_1_2_x86_64.whl (23 kB)
+#9 2.462 Installing collected packages: packaging, MarkupSafe, itsdangerous, click, blinker, Werkzeug, Jinja2, gunicorn, flask
+#9 3.119 Successfully installed Jinja2-3.1.6 MarkupSafe-3.0.3 Werkzeug-3.1.8 blinker-1.9.0 click-8.4.1 flask-3.0.3 gunicorn-22.0.0 itsdangerous-2.2.0 packaging-26.2
+#9 3.119 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#9 3.184 
+#9 3.184 [notice] A new release of pip is available: 25.0.1 -> 26.1.2
+#9 3.184 [notice] To update, run: pip install --upgrade pip
+#9 DONE 3.4s
+
+#10 [6/6] COPY . .
+#10 DONE 0.1s
+
+#11 exporting to image
+#11 exporting layers
+#11 exporting layers 0.8s done
+#11 writing image sha256:2d33fd2702fe89f804893d0614e339c491cb4634890f7553cfc6b17979dce452 done
+#11 naming to 586998979312.dkr.ecr.ap-southeast-1.amazonaws.com/fargate-lab-app:424b8e8 done
+#11 DONE 0.8s
+
+[Container] 2026/06/06 13:11:01.348769 Running command docker tag $ECR_URI:$IMAGE_TAG $ECR_URI:latest
+
+[Container] 2026/06/06 13:11:01.372603 Running command echo "Running Trivy security scan..."
+Running Trivy security scan...
+
+[Container] 2026/06/06 13:11:01.380393 Running command trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed --no-progress $ECR_URI:$IMAGE_TAG
+2026-06-06T13:11:01Z    INFO    [vulndb] Need to update DB
+2026-06-06T13:11:01Z    INFO    [vulndb] Downloading vulnerability DB...
+2026-06-06T13:11:01Z    INFO    [vulndb] Downloading artifact...    repo="mirror.gcr.io/aquasec/trivy-db:2"
+2026-06-06T13:11:05Z    INFO    [vulndb] Artifact successfully downloaded   repo="mirror.gcr.io/aquasec/trivy-db:2"
+2026-06-06T13:11:05Z    INFO    [vuln] Vulnerability scanning is enabled
+2026-06-06T13:11:05Z    INFO    [secret] Secret scanning is enabled
+2026-06-06T13:11:05Z    INFO    [secret] If your scanning is slow, please try '--scanners vuln' to disable secret scanning
+2026-06-06T13:11:05Z    INFO    [secret] Please see https://trivy.dev/docs/v0.71/guide/scanner/secret#recommendation for faster secret detection
+2026-06-06T13:11:08Z    INFO    [python] Licenses acquired from one or more METADATA files may be subject to additional terms. Use `--debug` flag to see all affected packages.
+2026-06-06T13:11:09Z    INFO    Detected OS family="alpine" version="3.23.4"
+2026-06-06T13:11:09Z    INFO    [alpine] Detecting vulnerabilities...   os_version="3.23" repository="3.23" pkg_num=51
+2026-06-06T13:11:09Z    INFO    Number of language-specific files   num=1
+2026-06-06T13:11:09Z    INFO    [python-pkg] Detecting vulnerabilities...
+
+Report Summary
+
+┌──────────────────────────────────────────────────────────────────────────────┬────────────┬─────────────────┬─────────┐
+│                                    Target                                    │    Type    │ Vulnerabilities │ Secrets │
+├──────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ 586998979312.dkr.ecr.ap-southeast-1.amazonaws.com/fargate-lab-app:424b8e8    │   alpine   │        0        │    -    │
+│ (alpine 3.23.4)                                                              │            │                 │         │
+├──────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ usr/local/lib/python3.12/site-packages/blinker-1.9.0.dist-info/METADATA      │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ usr/local/lib/python3.12/site-packages/click-8.4.1.dist-info/METADATA        │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ usr/local/lib/python3.12/site-packages/flask-3.0.3.dist-info/METADATA        │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ usr/local/lib/python3.12/site-packages/gunicorn-22.0.0.dist-info/METADATA    │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ usr/local/lib/python3.12/site-packages/itsdangerous-2.2.0.dist-info/METADATA │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ usr/local/lib/python3.12/site-packages/jinja2-3.1.6.dist-info/METADATA       │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ usr/local/lib/python3.12/site-packages/markupsafe-3.0.3.dist-info/METADATA   │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ usr/local/lib/python3.12/site-packages/packaging-26.2.dist-info/METADATA     │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ usr/local/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA         │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ usr/local/lib/python3.12/site-packages/werkzeug-3.1.8.dist-info/METADATA     │ python-pkg │        0        │    -    │
+└──────────────────────────────────────────────────────────────────────────────┴────────────┴─────────────────┴─────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+
+[Container] 2026/06/06 13:11:09.085022 Running command echo "Trivy scan passed - no HIGH or CRITICAL vulnerabilities found"
+Trivy scan passed - no HIGH or CRITICAL vulnerabilities found
+
+[Container] 2026/06/06 13:11:09.093080 Phase complete: BUILD State: SUCCEEDED
+[Container] 2026/06/06 13:11:09.093102 Phase context status code:  Message: 
+[Container] 2026/06/06 13:11:09.129853 Entering phase POST_BUILD
+[Container] 2026/06/06 13:11:09.131026 Running command echo "Pushing image to ECR..."
+Pushing image to ECR...
+
+[Container] 2026/06/06 13:11:09.138941 Running command docker push $ECR_URI:$IMAGE_TAG
+The push refers to repository [586998979312.dkr.ecr.ap-southeast-1.amazonaws.com/fargate-lab-app]
+ec70e0e0a0e3: Preparing
+0b6b920fce2d: Preparing
+cb23f5e91358: Preparing
+4880c9ec0458: Preparing
+e905456480b3: Preparing
+8046b081eeab: Preparing
+09a1a38fc6af: Preparing
+c92b0c861241: Preparing
+29df493baa13: Preparing
+8046b081eeab: Waiting
+09a1a38fc6af: Waiting
+c92b0c861241: Waiting
+29df493baa13: Waiting
+ec70e0e0a0e3: Pushed
+8046b081eeab: Layer already exists
+4880c9ec0458: Pushed
+cb23f5e91358: Pushed
+09a1a38fc6af: Layer already exists
+c92b0c861241: Layer already exists
+29df493baa13: Layer already exists
+0b6b920fce2d: Pushed
+e905456480b3: Pushed
+424b8e8: digest: sha256:1eccce2cb165b48fac7ac8cb3c1594027c050f324511e091ad819119b81377f7 size: 2202
+
+[Container] 2026/06/06 13:11:18.730656 Running command docker push $ECR_URI:latest
+The push refers to repository [586998979312.dkr.ecr.ap-southeast-1.amazonaws.com/fargate-lab-app]
+ec70e0e0a0e3: Preparing
+0b6b920fce2d: Preparing
+cb23f5e91358: Preparing
+4880c9ec0458: Preparing
+e905456480b3: Preparing
+8046b081eeab: Preparing
+09a1a38fc6af: Preparing
+c92b0c861241: Preparing
+29df493baa13: Preparing
+09a1a38fc6af: Waiting
+8046b081eeab: Waiting
+c92b0c861241: Waiting
+29df493baa13: Waiting
+0b6b920fce2d: Layer already exists
+cb23f5e91358: Layer already exists
+ec70e0e0a0e3: Layer already exists
+e905456480b3: Layer already exists
+4880c9ec0458: Layer already exists
+8046b081eeab: Layer already exists
+09a1a38fc6af: Layer already exists
+29df493baa13: Layer already exists
+c92b0c861241: Layer already exists
+latest: digest: sha256:1eccce2cb165b48fac7ac8cb3c1594027c050f324511e091ad819119b81377f7 size: 2202
+
+[Container] 2026/06/06 13:11:18.984481 Running command echo "Generating imagedefinitions.json..."
+Generating imagedefinitions.json...
+
+[Container] 2026/06/06 13:11:18.992131 Running command printf '[{"name":"%s","imageUri":"%s"}]' $ECS_CONTAINER_NAME $ECR_URI:$IMAGE_TAG > imagedefinitions.json
+
+[Container] 2026/06/06 13:11:18.999682 Running command cat imagedefinitions.json
+[{"name":"fargate-lab-app","imageUri":"586998979312.dkr.ecr.ap-southeast-1.amazonaws.com/fargate-lab-app:424b8e8"}]
+[Container] 2026/06/06 13:11:19.007937 Phase complete: POST_BUILD State: SUCCEEDED
+[Container] 2026/06/06 13:11:19.007951 Phase context status code:  Message: 
+[Container] 2026/06/06 13:11:19.195911 Expanding base directory path: .
+[Container] 2026/06/06 13:11:19.199587 Assembling file list
+[Container] 2026/06/06 13:11:19.199602 Expanding .
+[Container] 2026/06/06 13:11:19.202907 Expanding file paths for base directory .
+[Container] 2026/06/06 13:11:19.202919 Assembling file list
+[Container] 2026/06/06 13:11:19.202922 Expanding imagedefinitions.json
+[Container] 2026/06/06 13:11:19.206123 Found 1 file(s)
+[Container] 2026/06/06 13:11:19.207244 Set report auto-discover timeout to 5 seconds
+[Container] 2026/06/06 13:11:19.207290 Expanding base directory path:  .
+[Container] 2026/06/06 13:11:19.210430 Assembling file list
+[Container] 2026/06/06 13:11:19.210442 Expanding .
+[Container] 2026/06/06 13:11:19.213622 Expanding file paths for base directory .
+[Container] 2026/06/06 13:11:19.213637 Assembling file list
+[Container] 2026/06/06 13:11:19.213640 Expanding **/*
+[Container] 2026/06/06 13:11:19.216888 No matching auto-discover report paths found
+[Container] 2026/06/06 13:11:19.216906 Report auto-discover file discovery took 0.009663 seconds
+[Container] 2026/06/06 13:11:19.216916 Phase complete: UPLOAD_ARTIFACTS State: SUCCEEDED
+[Container] 2026/06/06 13:11:19.216925 Phase context status code:  Message: 
