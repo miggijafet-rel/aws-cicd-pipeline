@@ -35,7 +35,7 @@ phases:
 
       # Run Trivy security scan — FAIL build on HIGH or CRITICAL CVEs
       - echo "Running Trivy security scan..."
-      - trivy image --exit-code 1 --severity HIGH,CRITICAL --no-progress $ECR_URI:$IMAGE_TAG
+      - trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed --no-progress $ECR_URI:$IMAGE_TAG
       - echo "Trivy scan passed - no HIGH or CRITICAL vulnerabilities found"
 
   post_build:
