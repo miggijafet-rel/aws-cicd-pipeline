@@ -1,5 +1,8 @@
 # Use slim Python image — smaller = faster pulls, fewer vulnerabilities
-FROM python:3.12-slim
+FROM python:3.12-alpine
+
+# Also add this after WORKDIR /app to support Alpine's build tools:
+RUN apk add --no-cache gcc musl-dev
 
 WORKDIR /app
 
